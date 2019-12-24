@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">壹号码</string>
+    <string name="scan_text"> 将二维码放入框内，即可自动扫描</string>
+    <string name="cameradenied">当相机权限被拒绝时，应用程序将不能工作，请重新启动应用程序并授予权限</string>
+    <string name="storagedenied">当存储权限被拒绝时，应用程序将不能工作，请重新启动应用程序并授予权限</string>
+    <string name="camerastoragedenied">如果权限被拒绝，应用程序将无法工作，请重新启动应用程序并授予权限。</string>
+    <string name="permissionsgranted">授权</string>
+</resources>

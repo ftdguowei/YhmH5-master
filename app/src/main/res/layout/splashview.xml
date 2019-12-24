@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/view"
+	>
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+						android:id="@+id/splashview_bgnd"
+						>
+            <ImageView android:id="@+id/top"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+            		android:background="#00ffffff"/>
+            <View android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="0.7"
+            		android:id="@+id/center"
+                android:background="#00ffffff"
+            		
+            		/>
+            <ImageView android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="#00ffffff"
+            		android:id="@+id/bottom"/>
+        </LinearLayout>
+
+        <ImageView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00ffffff"
+        		android:id="@+id/splashview_logo"
+        		android:layout_gravity="center"
+            android:visibility="invisible"
+        		/>
+
+</merge>

@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+android {
+    signingConfigs {
+        release {
+            keyAlias 'sigmatrix.keystore'
+            keyPassword 'sigmatrix'
+            storeFile file('E:/tianDiYiHao/YhmH5-master/sigmatrix.keystore')
+            storePassword 'sigmatrix'
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        applicationId "com.sigmatrix.yhmh5.yhmh5"
+//        applicationId "com.sigmatrix.yhmh5.yhmh5sj"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.3"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk { abiFilters "armeabi" }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    allprojects {
+        repositories {
+            jcenter()
+            flatDir {
+                dirs 'libs'
+            }
+        }
+    }
+    dependencies {
+        compile fileTree(include: ['*.jar'], dir: 'libs')
+        androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+            exclude group: 'com.android.support', module: 'support-annotations'
+        })
+        compile 'com.android.support:appcompat-v7:24.2.1'
+        compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha4'
+        compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
+        compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+        testCompile 'junit:junit:4.12'
+        compile files('libs/zxing.jar')
+        compile files('libs/gson-2.6.2.jar')
+        compile files('libs/StringUtils-3.3.2.jar')
+        compile files('libs/ht380k4g-jar.jar')
+
+        compileOnly 'com.symbol:emdk:+'
+    }
+    repositories {
+        maven {
+            url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'
+        }
+        jcenter()
+    }
+}
+dependencies {
+    compile files('libs/tbs_sdk_thirdapp_v3.5.0.1004_43500_sharewithdownload_withoutGame_obfs_20170801_113025.jar')
+}

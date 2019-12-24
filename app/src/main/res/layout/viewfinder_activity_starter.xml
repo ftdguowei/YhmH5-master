@@ -1,0 +1,176 @@
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:layout_margin="8dip">
+  
+<RelativeLayout
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  >
+
+  <Spinner
+    android:id="@+id/spinnerCameratype"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_centerHorizontal="true"
+    android:layout_alignParentTop="true" />
+
+  <TextView
+    android:id="@+id/tvAutofocus"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/spinnerCameratype"
+    android:text="Autofocus period: " />
+
+  <SeekBar
+    android:id="@+id/sbAutofocus"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/tvAutofocus"
+    android:max="5"
+    android:progress="1" />
+
+  <CheckBox
+    android:id="@+id/cbFlashlight"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:layout_below="@+id/sbAutofocus"
+    android:layout_margin="8dip"
+    android:minWidth="200dip"
+    android:text=" Flash light" />
+
+  <Spinner
+    android:id="@+id/spinnerResolution"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/cbFlashlight" />
+
+  <TextView
+    android:id="@+id/tvShortEdge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/spinnerResolution"
+    android:text="Short edge: " />
+
+  <SeekBar
+    android:id="@+id/sbShortEdge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/tvShortEdge"
+    android:max="99"
+    android:progress="1" />
+
+  <TextView
+    android:id="@+id/tvLongEdge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/sbShortEdge"
+    android:text="Long edge: " />
+
+  <SeekBar
+    android:id="@+id/sbLongEdge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/tvLongEdge"
+    android:max="99"
+    android:progress="1" />
+
+  <TextView
+    android:id="@+id/tvOpacity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/sbLongEdge"
+    android:text="Decoding frame opacity: " />
+
+  <SeekBar
+    android:id="@+id/sbOpacity"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_below="@+id/tvOpacity"
+    android:max="255"
+    android:progress="1" />
+
+  <Spinner
+    android:id="@+id/spinnerScaletype"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/sbOpacity" />
+
+  <CheckBox
+    android:id="@+id/cbDebugOverlay"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/spinnerResolution"
+    android:layout_alignRight="@+id/spinnerResolution"
+    android:layout_below="@+id/spinnerScaletype"
+    android:layout_margin="8dip"
+    android:minWidth="200dip"
+    android:text=" Debug overlay" />
+
+  <Button
+    android:id="@+id/button1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="200dip"
+    android:layout_margin="8dip"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@+id/cbDebugOverlay"
+    android:text="Start ViewfinderActivity" />
+
+  <TextView
+    android:id="@+id/text1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dip"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_below="@+id/button1"
+    android:text="" />
+
+</RelativeLayout>
+
+</ScrollView><!-- From: file:/F:/Bitbucket/Android/nr-android-neoreader4/SampleApp/res/layout/viewfinder_activity_starter.xml -->
