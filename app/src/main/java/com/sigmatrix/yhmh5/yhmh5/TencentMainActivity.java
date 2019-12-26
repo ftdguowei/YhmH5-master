@@ -54,13 +54,13 @@ import com.tencent.smtt.sdk.WebViewClient;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-public class TencentMainActivity extends Activity implements View.OnClickListener/*,View.OnLayoutChangeListener */ {
+public class TencentMainActivity extends Activity implements View.OnClickListener
+
+
+
+{
     private Context mContext;
-    private JavaScriptInterface JSInterface;
     private WebView webview;
-//    private ProgressBar progressBar;
-    private String number;//单号
-    private String tag;//标识
     private RelativeLayout rl_view1, rl_view3, rl_view4, rl_view5, rl_view8;
     private ImageView iv_view;
     private RelativeLayout left_drawer;
@@ -207,29 +207,6 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
             }
         });
 
-//                cookie = SharedPrefUtil.getInstance().getString(TencentMainActivity.this,"cookie","");
-//                split = cookie.split(";");
-//                if (/*(URL.indexOf("login/login"))!=-1&&*/split.length>1) {
-//                    CookieSyncManager.createInstance(TencentMainActivity.this);
-//                    CookieManager cookieManager = CookieManager.getInstance();
-//                    cookieManager.setAcceptCookie(true);
-//                    cookieManager.removeAllCookie();
-//                    for (int x = 0; x < split.length; x++) {
-//                        String[] split1 = split[x].split("=");
-//                        cookieManager.setCookie(URL,split1[0]+"="+split1[1]);
-//                    }
-////            cookieManager.setCookie(URL, cookie);
-//                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP){
-//                        cookieManager.flush();
-//                    }else {
-//                        CookieSyncManager.getInstance().sync();
-//                    }
-
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
         webview.loadUrl(URL);
 
         webview.setDownloadListener(new DownloadListener() {
@@ -249,7 +226,6 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
                 // TODO Auto-generated method stub
                 super.onProgressChanged(view, newProgress);
                 if (newProgress == 100) {
-//                    iv_view.setVisibility(View.GONE);
                     Message message = new Message();
                     message.what =  1;
                     mHandler2.sendMessageDelayed(message,3000);
@@ -571,11 +547,11 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
 
     @Override
     protected void onRestart() {
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("com.jb.action.F4key");
-//        registerReceiver(f4Receiver, intentFilter);
-//        barcodeManager.Barcode_Open(this, dataReceived);
-//        sendBroadcast(new Intent("ReLoadCom"));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.jb.action.F4key");
+        registerReceiver(f4Receiver, intentFilter);
+        barcodeManager.Barcode_Open(this, dataReceived);
+        sendBroadcast(new Intent("ReLoadCom"));
         super.onRestart();
     }
 
@@ -663,6 +639,8 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
             mediaPlayer.seekTo(0);
         }
     };
+
+
 
 
 }
