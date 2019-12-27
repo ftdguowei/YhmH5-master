@@ -17,8 +17,8 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
-        applicationId "com.sigmatrix.yhmh5.yhmh5"
-//        applicationId "com.sigmatrix.yhmh5.yhmh5sj"
+//        applicationId "com.sigmatrix.standard.yhmh5.yhmh5"
+        applicationId "com.sigmatrix.banma.yhmh5.yhmh5"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

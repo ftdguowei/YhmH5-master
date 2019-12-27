@@ -42,6 +42,14 @@ import com.sigmatrix.yhmh5.yhmh5.Utils.ToastUtil;
 import com.sigmatrix.yhmh5.yhmh5.app.MyApplication;
 import com.sigmatrix.yhmh5.yhmh5.barcode.BeepManager;
 import com.sigmatrix.yhmh5.yhmh5.dummy.SampleActivity;
+import com.symbol.emdk.EMDKManager;
+import com.symbol.emdk.EMDKResults;
+import com.symbol.emdk.barcode.ScanDataCollection;
+import com.symbol.emdk.barcode.Scanner;
+import com.symbol.emdk.barcode.ScannerException;
+import com.symbol.emdk.barcode.ScannerInfo;
+import com.symbol.emdk.barcode.ScannerResults;
+import com.symbol.emdk.barcode.StatusData;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.CookieManager;
 import com.tencent.smtt.sdk.CookieSyncManager;
@@ -52,10 +60,13 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class TencentMainActivity extends Activity implements View.OnClickListener
-
+        ,EMDKManager.EMDKListener,
+        Scanner.StatusListener, Scanner.DataListener
 
 
 {
@@ -87,6 +98,16 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
     private String[] split;
 
 
+
+    private EMDKManager emdkManager = null;
+    private com.symbol.emdk.barcode.BarcodeManager barcodeManagerEMDK = null;
+    private List<ScannerInfo> deviceList = null;
+    private Scanner scanner = null;
+    private boolean bSoftTriggerSelected = false;
+    private boolean bDecoderSettingsChanged = false;
+    private boolean bExtScannerDisconnected = false;
+    private final Object lock = new Object();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +119,14 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
             StatusBarUtil.StatusBarLightMode(TencentMainActivity.this,StatusBarUtil.StatusBarLightMode(TencentMainActivity.this));
         }
         setContentView(R.layout.activity_tencentmain);
+
+
+        EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
+        if (results.statusCode != EMDKResults.STATUS_CODE.SUCCESS) {
+            return;
+        }
+
+
         AndroidBug5497Workaround.assistActivity(this);
         webview = (WebView) findViewById(R.id.web_view);
         iv_view = (ImageView) findViewById(R.id.iv_view);
@@ -464,20 +493,6 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
 ////        }
 //    }
 
-    @Override
-    protected void onResume() {
-        //捷宝
-        sendBroadcast(new Intent("ReLoadCom"));
-        if (barcodeManager == null) {
-            barcodeManager = BarcodeManager.getInstance();
-        }
-        barcodeManager.Barcode_Start();
-        super.onResume();
-    }
-
-
-
-
     private void initBroadcastReciever() {
         //捷宝
         /**
@@ -555,15 +570,6 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
         super.onRestart();
     }
 
-
-    @Override
-    public void onPause() {
-        // 若有启动有扫描服务则开启
-//        sendBroadcast(new Intent("ReleaseCom"));
-        super.onPause();
-    }
-
-
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -625,22 +631,189 @@ public class TencentMainActivity extends Activity implements View.OnClickListene
         webview.loadUrl("javascript:setLocation('" + barcode + "')");
     }
 
-    /**
-     * 关闭后记得取消注册接收器
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(f4Receiver);
-    }
-
     private final MediaPlayer.OnCompletionListener beepListener = new MediaPlayer.OnCompletionListener() {
         public void onCompletion(MediaPlayer mediaPlayer) {
             mediaPlayer.seekTo(0);
         }
     };
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //捷宝
+//        sendBroadcast(new Intent("ReLoadCom"));
+//        if (barcodeManager == null) {
+//            barcodeManager = BarcodeManager.getInstance();
+//        }
+//        barcodeManager.Barcode_Start();
 
+        if (emdkManager != null) {
+            // Acquire the barcode manager resources
+            initBarcodeManager();
+            // Enumerate scanner devices
+            enumerateScannerDevices();
+            initScanner();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        deInitScanner();
+        deInitBarcodeManager();
+    }
 
+    /**
+     * 关闭后记得取消注册接收器
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        unregisterReceiver(f4Receiver);
+        if (emdkManager != null) {
+            emdkManager.release();
+            emdkManager = null;
+        }
+    }
+
+    private void deInitBarcodeManager(){
+        if (emdkManager != null) {
+            emdkManager.release(EMDKManager.FEATURE_TYPE.BARCODE);
+        }
+    }
+    @Override
+    public void onClosed() {
+        if (emdkManager != null) {
+            emdkManager.release();
+            emdkManager = null;
+        }
+    }
+    //  @Override
+//  public void onConnectionChange(ScannerInfo scannerInfo, BarcodeManager.ConnectionState connectionState) {
+//    switch(connectionState) {
+//      case CONNECTED:
+//        bSoftTriggerSelected = false;
+//        synchronized (lock) {
+//          initScanner();
+//          bExtScannerDisconnected = false;
+//        }
+//        break;
+//      case DISCONNECTED:
+//        bExtScannerDisconnected = true;
+//        synchronized (lock) {
+//          deInitScanner();
+//        }
+//        break;
+//    }
+//  }
+    @Override
+    public void onData(ScanDataCollection scanDataCollection) {
+        if ((scanDataCollection != null) && (scanDataCollection.getResult() == ScannerResults.SUCCESS)) {
+            ArrayList<ScanDataCollection.ScanData> scanData = scanDataCollection.getScanData();
+            for(final ScanDataCollection.ScanData data : scanData) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String barcode = data.getData();
+                        initCode(barcode);
+                    }
+                });
+            }
+        }
+    }
+    @Override
+    public void onStatus(StatusData statusData) {
+        StatusData.ScannerStates state = statusData.getState();
+        switch(state) {
+            case IDLE:
+                // set trigger type
+                if(bSoftTriggerSelected) {
+                    scanner.triggerType = Scanner.TriggerType.SOFT_ONCE;
+                    bSoftTriggerSelected = false;
+                } else {
+                    scanner.triggerType = Scanner.TriggerType.HARD;
+                }
+                // set decoders
+                if(bDecoderSettingsChanged) {
+                    bDecoderSettingsChanged = false;
+                }
+                // submit read
+                if(!scanner.isReadPending() && !bExtScannerDisconnected) {
+                    try {
+                        scanner.read();
+                    } catch (ScannerException e) {
+                    }
+                }
+                break;
+            case WAITING:
+                break;
+            case SCANNING:
+                break;
+            case DISABLED:
+                break;
+            case ERROR:
+                break;
+            default:
+                break;
+        }
+    }
+    @Override
+    public void onOpened(EMDKManager emdkManager) {
+        this.emdkManager = emdkManager;
+        // Acquire the barcode manager resources
+        initBarcodeManager();
+        // Enumerate scanner devices
+        enumerateScannerDevices();
+
+        deInitScanner();
+        initScanner();
+    }
+    private void initScanner() {
+        if (scanner == null) {
+            if (barcodeManagerEMDK != null)
+                scanner = barcodeManagerEMDK.getDevice(deviceList.get(0));
+        }
+        if (scanner != null) {
+            scanner.addDataListener(this);
+            scanner.addStatusListener(this);
+            try {
+                scanner.enable();
+            } catch (ScannerException e) {
+                deInitScanner();
+            }
+        }else{
+        }
+    }
+    private void deInitScanner() {
+        if (scanner != null) {
+            try{
+                scanner.disable();
+            } catch (Exception e) {
+            }
+
+            try {
+                scanner.removeDataListener(this);
+                scanner.removeStatusListener(this);
+            } catch (Exception e) {
+            }
+
+            try{
+                scanner.release();
+            } catch (Exception e) {
+            }
+            scanner = null;
+        }
+    }
+    private void initBarcodeManager(){
+        barcodeManagerEMDK = (com.symbol.emdk.barcode.BarcodeManager) emdkManager.getInstance(EMDKManager.FEATURE_TYPE.BARCODE);
+        // Add connection listener
+//    if (barcodeManager != null) {
+//      barcodeManager.addConnectionListener(this);
+//    }
+    }
+    private void enumerateScannerDevices() {
+        if (barcodeManagerEMDK != null) {
+            deviceList = barcodeManagerEMDK.getSupportedDevicesInfo();
+        }
+    }
 
 }
