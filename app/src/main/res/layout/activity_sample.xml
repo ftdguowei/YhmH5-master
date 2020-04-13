@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请使用斑马手持机扫描瓶盖外码"
+        android:text="请按PDA侧边黄色键进行扫外码溯源"
         android:textColor="#000000"
         android:textSize="20sp"
         android:layout_centerInParent="true"/>
